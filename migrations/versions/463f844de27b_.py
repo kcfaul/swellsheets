@@ -1,13 +1,13 @@
 """empty message
 
-Revision ID: 153c25beb050
+Revision ID: 463f844de27b
 Revises: None
-Create Date: 2016-06-22 12:25:07.345367
+Create Date: 2016-07-13 00:10:36.908068
 
 """
 
 # revision identifiers, used by Alembic.
-revision = '153c25beb050'
+revision = '463f844de27b'
 down_revision = None
 
 from alembic import op
@@ -61,6 +61,7 @@ def upgrade():
     sa.Column('updated_on', sa.DateTime(), nullable=False),
     sa.Column('name', sa.String(length=256), nullable=False),
     sa.Column('category_id', sa.Integer(), nullable=True),
+    sa.Column('description', sa.String(length=500), nullable=False),
     sa.ForeignKeyConstraint(['category_id'], ['category.id'], ),
     sa.PrimaryKeyConstraint('id'),
     sa.UniqueConstraint('name')
@@ -72,11 +73,9 @@ def upgrade():
     sa.Column('sku_code', sa.String(length=16), nullable=False),
     sa.Column('description', sa.String(length=500), nullable=False),
     sa.Column('product_id', sa.Integer(), nullable=True),
-    sa.Column('product_name', sa.String(), nullable=True),
     sa.Column('cost', sa.Float(), nullable=True),
     sa.Column('msrp', sa.Float(), nullable=True),
     sa.ForeignKeyConstraint(['product_id'], ['product.id'], ),
-    sa.ForeignKeyConstraint(['product_name'], ['product.name'], ),
     sa.PrimaryKeyConstraint('id')
     )
     op.create_table('product_sku_price',
