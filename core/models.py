@@ -112,6 +112,7 @@ class ProductSku(BaseModelMixin, db.Model):
     sku_code = db.Column(db.String(16), nullable=False)
     description = db.Column(db.String(500), nullable=False)
     product_id = db.Column(db.Integer(), db.ForeignKey('product.id'))
+    price = db.Column(db.Float(), nullable=False, default=0)
     # product_name = db.Column(db.String(), db.ForeignKey('product.name'))
 
     # prices = db.relationship('ProductPrice', backref='sku',
@@ -126,6 +127,10 @@ class ProductSku(BaseModelMixin, db.Model):
 
     def __repr__(self):
         return "<SKU '{}'>".format(self.sku_code)
+
+    @property
+    def formated_price(self):
+        return "${0:.2f}".format(self.price)
 
 
 class PriceTier(BaseModelMixin, db.Model):

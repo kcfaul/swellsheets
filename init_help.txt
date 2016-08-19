@@ -1,0 +1,11 @@
+export APP_SETTINGS=dev
+export DATABASE_URL="postgresql://<db_user>:<db_pass>@localhost/conawaypay_dev"
+python manage.py db init
+python manage.py db migrate
+
+930cae9bb34a2092e5c48a805eaa584cd7385215
+
+copy paste:
+
+export APP_SETTINGS=dev
+export DATABASE_URL="postgresql://postgres@localhost/conawaypay_dev"

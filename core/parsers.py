@@ -1,11 +1,19 @@
 from flask_restful import fields, reqparse
 
+sku_fields = {
+    'id': fields.Integer(),
+    'code': fields.String(attribute='sku_code'),
+    'price': fields.String(attribute='formated_price'),
+    'description': fields.String(),
+}
+
 product_fields = {
     'id': fields.Integer(),
     # 'sku_code': fields.String(),
     'name': fields.String(),
     'description': fields.String(),
     'category_id': fields.Integer(),
+    'skus': fields.Nested(sku_fields),
     # 'prices': fields.List(fields.Nested(nested_price_fields)),
 }
 
@@ -89,7 +97,7 @@ class ProductParser(ApiParser):
 
         product_fields = {
             'id': fields.Integer(),
-            # 'sku_code': fields.String(),
+            'skus': fields.Nested(sku_fields),
             'name': fields.String(),
             'description': fields.String(),
             'category_id': fields.Integer(),
@@ -112,18 +120,18 @@ class CategoryParser(ApiParser):
     token = ParserField(type=str, required=True,
                         help="Auth Token is required to create products")
 
-    @property
-    def get(self):
-        category_fields = {
-            'id': fields.Integer(),
-            'name': fields.String(),
-            'description': fields.String(),
-            'products': CategoryProductList(),
-        }
-        return category_fields
+#    @property
+#    def get(self):
+#        category_fields = {
+#            'id': fields.Integer(),
+#            'name': fields.String(),
+#            'description': fields.String(),
+#            'products': CategoryProductList(),
+#        }
+#        return category_fields
 
     @property
-    def get_single(self):
+    def get(self):
         category_fields = {
             'id': fields.Integer(),
             'name': fields.String(),
@@ -131,3 +139,28 @@ class CategoryParser(ApiParser):
             'products': fields.List(fields.Nested(product_fields)),
         }
         return category_fields
+
+
+class ProductSkuParser(ApiParser):
+    sku_code = ParserField(type=str, required=['POST'],
+                           help="`code` is required")
+    description = ParserField(type=str, required=['POST'],
+                              help="`description` is required")
+    token = ParserField(type=str, required=True,
+                        help="Auth Token is required to create/modify skus")
+
+    price = ParserField(type=float, required=['POST'],
+                        help="`price` is requred to create skus")
+
+    product_id = ParserField(type=str, required=['POST'],
+                             help="`product_id` is required to create skus")
+
+    @property
+    def get(self):
+        sku_fields = {
+            'id': fields.Integer(),
+            'sku_code': fields.String(),
+            'price': fields.String(attribute='formated_price'),
+        }
+
+        return sku_fields

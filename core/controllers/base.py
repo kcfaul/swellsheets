@@ -49,3 +49,50 @@ class ModelResource(Resource):
             db.session.commit()
 
             return new_obj.id, 201
+
+    def put(self, obj_id=None):
+        if not obj_id:
+            abort(400)
+
+        obj = self.Model.query.get(obj_id)
+        if not obj:
+            abort(404)
+
+        args = self.parser.put.parse_args(strict=True)
+        user = User.verify_auth_token(args.pop('token'))
+
+        if not user:
+            abort(401)
+
+        # if user.role not User.ADMIN:
+        #     abort(403)
+
+        for key in args:
+            if args[key]:
+                setattr(obj, key, args[key])
+
+        db.session.add(obj)
+        db.session.commit()
+        return obj.id, 201
+
+    def delete(self, obj_id=None):
+        if not obj_id:
+            abort(400, "Please specificy the object you wish to delete"
+                  "e.g. /api/1/<resource>/<OBJ_ID>, OBJ_ID is missing")
+
+        obj = self.Model.query.get(obj_id)
+        if not obj:
+            abort(404)
+
+        args = self.parser.delete.parse_args(strict=True)
+        user = User.verify_auth_token(args['token'])
+
+        if not user:
+            abort(401)
+
+        # if user.role not User.ADMIN:
+        #     abort(403)
+
+        db.session.delete(obj)
+        db.session.commit()
+        return "", 204
